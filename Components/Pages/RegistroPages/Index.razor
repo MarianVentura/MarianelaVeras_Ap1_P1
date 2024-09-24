@@ -1,0 +1,35 @@
+﻿@page "/Registro/Index"
+@rendermode InteractiveServer
+@inject NavigationManager navigation
+
+<PageTitle></PageTitle>
+
+ class="border shadow-lg p-3 rounded">
+    <Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight" />
+
+    <div class="card-header bg-primary text-white text-center py-2 rounded">
+        <h3 style="font-weight: bold;" class="mb-0 font-weight-bold"></h3>
+    </div>
+    <div class="card-body">
+
+
+    @Boton Crear@
+            <div class="col-md-3 text-end">
+                <a href="" class="btn btn-success" type="button"><span class="bi bi-floppy"></span> Crear </a>
+            </div>
+        </div>
+    @Tabla@
+    <table class="table table-bordered text-center">
+        <thead class="bg-primary text-white">
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+
+            </tr>
+        </thead>
+        <tbody>
+
+           
+        </tbody>
+    </table>
