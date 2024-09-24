@@ -1,10 +1,22 @@
 using MarianelaVeras_Ap1_P1.Components;
+using MarianelaVeras_Ap1_P1.DAL;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+///ConStr para Contexto
+var ConStr = builder.Configuration.GetConnectionString("ConStr");
+
+//Contexto en el builder con ConStr
+builder.Services.AddDbContext<Contexto>(options => options.UseSqlite(ConStr));
+
+builder.Services.AddScoped<RegistroServices>();
+
+
 
 var app = builder.Build();
 
