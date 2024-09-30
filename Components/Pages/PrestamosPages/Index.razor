@@ -1,5 +1,152 @@
-﻿<h3>Index</h3>
+﻿@page "/Prestamos/Index"
+@inject PrestamosServices prestamosServices
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Préstamos</PageTitle>
+
+<Toasts class="p-3 mt-5" Messages="messages" Placement="ToastsPlacement.TopRight" />
+
+<div class="border shadow-lg p-3 rounded">
+    <div class="card-header bg-primary text-white text-center py-2 rounded">
+        <h3 style="font-weight: bold;" class="mb-0">Préstamos</h3>
+    </div>
+
+    <div class="row mb-3 align-items-end">
+        <div class="col-md-3">
+            <label for="Filtro" class="form-label"></label>
+            <select @bind="filtro" class="form-select">
+                <option value="" disabled selected>Filtrar por:</option>
+                <option value="id">ID</option>
+                <option value="deudor">Deudor</option>
+                <option value="concepto">Concepto</option>
+                <option value="monto">Monto</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="ValorFiltro" class="form-label"></label>
+            <div class="input-group">
+                <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
+                <button @onclick="Buscar" class="btn btn-outline-secondary" type="button">
+                    <span class="bi bi-search"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-9"></div>
+            <div class="col-md-3 text-end">
+                <a href="/Prestamos/Create" class="btn btn-success" type="button">
+                    <i class="bi bi-plus-square mt-3"></i>
+                    Crear
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered text-center">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th>PréstamoId</th>
+                    <th>Deudor</th>
+                    <th>Concepto</th>
+                    <th>Monto</th>
+                    <th>Ver</th>
+                    <th>Editar</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var prestamo in ListaPrestamos)
+                {
+                    <tr>
+                        <td>@prestamo.PrestamoId</td>
+                        <td>@prestamo.Deudor</td>
+                        <td>@prestamo.Concepto</td>
+                        <td>@prestamo.Monto.ToString("C")</td>
+                        <td>
+                            <a class="btn btn-outline-primary" href="/Prestamos/Details/@prestamo.PrestamoId">
+                                <span class="btn bi bi-eye"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a class="btn btn-outline-success" href="/Prestamos/Edit/@prestamo.PrestamoId">
+                                <span class="btn bi bi-pencil-square"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a class="btn btn-outline-danger" href="/Prestamos/Delete/@prestamo.PrestamoId">
+                                <span class="btn bi bi-trash"></span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer text-start">
+        <p style="font-weight: bold;">Total de Préstamos: @ListaPrestamos.Count</p>
+    </div>
+</div>
 
 @code {
+    public List<Prestamos> ListaPrestamos { get; set; } = new List<Prestamos>();
+    private string filtro = "id";
+    private string? valorFiltro;
 
+    List<ToastMessage> messages = new List<ToastMessage>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaPrestamos = await prestamosServices.Listar(p => p.PrestamoId > 0);
+        ShowMessage(ToastType.Info);
+    }
+
+    private async Task Buscar()
+    {
+        if (!string.IsNullOrWhiteSpace(valorFiltro))
+        {
+            if (filtro == "id" && int.TryParse(valorFiltro, out int prestamoId))
+            {
+                ListaPrestamos = await prestamosServices.Listar(p => p.PrestamoId == prestamoId);
+            }
+            else if (filtro == "deudor")
+            {
+                ListaPrestamos = await prestamosServices.Listar(p => p.Deudor.Contains(valorFiltro, StringComparison.OrdinalIgnoreCase));
+            }
+            else if (filtro == "concepto")
+            {
+                ListaPrestamos = await prestamosServices.Listar(p => p.Concepto.Contains(valorFiltro, StringComparison.OrdinalIgnoreCase));
+            }
+            else if (filtro == "monto" && decimal.TryParse(valorFiltro, out decimal monto))
+            {
+                ListaPrestamos = await prestamosServices.Listar(p => p.Monto == monto);
+            }
+        }
+        else
+        {
+            ListaPrestamos = await prestamosServices.Listar(p => true);
+        }
+
+        ShowMessage(ToastType.Success);
+    }
+
+    private void ShowMessage(ToastType toastType)
+    {
+        messages.Add(CreateToastMessage(toastType));
+    }
+
+    private ToastMessage CreateToastMessage(ToastType toastType)
+    {
+        return new ToastMessage
+            {
+                Type = toastType,
+                Title = "Blazor Bootstrap",
+                HelpText = $"{DateTime.Now}",
+                Message = $"DateTime: {DateTime.Now}",
+            };
+    }
 }
