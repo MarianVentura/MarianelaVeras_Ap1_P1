@@ -1,39 +1,58 @@
 using MarianelaVeras_Ap1_P1.Components;
 using MarianelaVeras_Ap1_P1.DAL;
 using Microsoft.EntityFrameworkCore;
-
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
-
-///ConStr para Contexto
-var ConStr = builder.Configuration.GetConnectionString("ConStr");
-
-//Contexto en el builder con ConStr
-builder.Services.AddDbContext<Contexto>(options => options.UseSqlite(ConStr));
-
-builder.Services.AddScoped<RegistroServices>();
+using MarianelaVeras_Ap1_P1.DAL;
+using MarianelaVeras_Ap1_P1.Models;
+using MarianelaVeras_Ap1_P1.Services;
 
 
 
-var app = builder.Build();
+namespace RegistroTecnicos;
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+public class Program
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    public static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
+
+        // Add services to the container.
+        builder.Services.AddRazorComponents()
+            .AddInteractiveServerComponents();
+
+        //Obtenemos el ConStr para usarlo en el contexto
+        var ConStr = builder.Configuration.GetConnectionString("ConStr");
+
+        //Agregamos el contexto al builder con el ConStr
+        builder.Services.AddDbContext<Contexto>(Options => Options.UseSqlite(ConStr));
+
+        builder.Services.AddScoped<PrestamosServices>();
+
+        
+
+
+
+        builder.Services.AddBlazorBootstrap();
+
+
+
+        var app = builder.Build();
+
+        // Configure the HTTP request pipeline.
+        if (!app.Environment.IsDevelopment())
+        {
+            app.UseExceptionHandler("/Error", createScopeForErrors: true);
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
+        }
+
+        app.UseHttpsRedirection();
+
+        app.UseStaticFiles();
+        app.UseAntiforgery();
+
+        app.MapRazorComponents<App>()
+            .AddInteractiveServerRenderMode();
+
+        app.Run();
+    }
 }
-
-app.UseHttpsRedirection();
-
-app.UseStaticFiles();
-app.UseAntiforgery();
-
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
-
-app.Run();
