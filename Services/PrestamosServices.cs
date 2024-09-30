@@ -3,8 +3,8 @@ using MarianelaVeras_Ap1_P1.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace MarianelaVeras_Ap1_P1.Services;
-
+namespace RegistroArticulos.Services
+{
     public class PrestamosServices
     {
         private readonly Contexto _contexto;
@@ -74,4 +74,4 @@ namespace MarianelaVeras_Ap1_P1.Services;
                 .ToListAsync();
         }
     }
-
+}
