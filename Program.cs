@@ -7,7 +7,7 @@ using MarianelaVeras_Ap1_P1.Services;
 
 
 
-namespace RegistroTecnicos;
+namespace MarianelaVeras_Ap1_P1;
 
 public class Program
 {
@@ -26,10 +26,6 @@ public class Program
         builder.Services.AddDbContext<Contexto>(Options => Options.UseSqlite(ConStr));
 
         builder.Services.AddScoped<PrestamosServices>();
-
-        
-
-
 
         builder.Services.AddBlazorBootstrap();
 
