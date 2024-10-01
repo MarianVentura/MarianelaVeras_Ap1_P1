@@ -1,5 +1,103 @@
-﻿<h3>Delete</h3>
+﻿@page "/Prestamos/Delete/{prestamoId:int}"
+@inject PrestamosServices prestamosServices
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Eliminar Préstamo</PageTitle>
+
+<Toasts class="p-3 mt-5" Messages="messages" Placement="ToastsPlacement.TopRight" />
+
+<div class="border shadow-lg p-3 rounded">
+    <div class="card-header bg-danger text-white text-center py-2 rounded">
+        <h3 style="font-weight: bold;" class="mb-0">Eliminar Préstamo</h3>
+    </div>
+
+    <div class="card-body">
+        @if (prestamo != null)
+        {
+            <div class="mb-3">
+                <label class="form-label"><strong>Deudor:</strong></label>
+                <p>@prestamo.Deudor</p>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Concepto:</strong></label>
+                <p>@prestamo.Concepto</p>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Monto:</strong></label>
+                <p>@prestamo.Monto.ToString("C")</p>
+            </div>
+
+            <div class="alert alert-warning" role="alert">
+                ¿Estás seguro de que deseas eliminar este préstamo?
+            </div>
+
+            <div class="text-end">
+                <button type="button" @onclick="ConfirmarEliminacion" class="btn btn-danger me-2">
+                    <i class="bi bi-trash"></i> Eliminar
+                </button>
+                <button type="button" @onclick="Volver" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                No se encontró el préstamo solicitado.
+            </div>
+        }
+    </div>
+</div>
 
 @code {
+    [Parameter] public int prestamoId { get; set; }
+    private Prestamos prestamo;
+    private List<ToastMessage> messages = new List<ToastMessage>();
 
+    private string? alertMessage;
+    private AlertColor alertColor;
+
+    protected override async Task OnInitializedAsync()
+    {
+        prestamo = await prestamosServices.Buscar(prestamoId);
+    }
+
+    private async Task ConfirmarEliminacion()
+    {
+        if (await prestamosServices.Eliminar(prestamoId))
+        {
+            ShowMessage(ToastType.Success);
+            navigationManager.NavigateTo("/Prestamos/Index");
+        }
+        else
+        {
+            ShowMessage(ToastType.Warning);
+            ShowAlert("Error al eliminar el préstamo.", AlertColor.Danger);
+        }
+    }
+
+    private void Volver()
+    {
+        navigationManager.NavigateTo("/Prestamos/Index");
+    }
+
+    private void ShowMessage(ToastType toastType) => messages.Add(CreateToastMessage(toastType));
+
+    private ToastMessage CreateToastMessage(ToastType toastType)
+        => new ToastMessage
+            {
+                Type = toastType,
+                Title = "Blazor Bootstrap",
+                HelpText = $"{DateTime.Now}",
+                Message = $"Préstamo {(prestamo != null ? "eliminado" : "no encontrado")} con éxito. Fecha y hora: {DateTime.Now}",
+            };
+
+    private void ShowAlert(string message, AlertColor color)
+    {
+        alertMessage = message;
+        alertColor = color;
+    }
 }
