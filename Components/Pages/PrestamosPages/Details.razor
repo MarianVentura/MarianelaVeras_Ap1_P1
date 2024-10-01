@@ -1,5 +1,62 @@
-﻿<h3>Details</h3>
+﻿@page "/Prestamos/Details/{prestamoId:int}"
+@inject PrestamosServices prestamosServices
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Detalles del Préstamo</PageTitle>
+
+<Toasts class="p-3 mt-5" Messages="messages" Placement="ToastsPlacement.TopRight" />
+
+<div class="border shadow-lg p-3 rounded">
+    <div class="card-header bg-info text-white text-center py-2 rounded">
+        <h3 style="font-weight: bold;" class="mb-0">Detalles del Préstamo</h3>
+    </div>
+
+    <div class="card-body">
+        @if (prestamo != null)
+        {
+            <div class="mb-3">
+                <label class="form-label"><strong>Deudor:</strong></label>
+                <p>@prestamo.Deudor</p>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Concepto:</strong></label>
+                <p>@prestamo.Concepto</p>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Monto:</strong></label>
+                <p>@prestamo.Monto.ToString("C")</p>
+            </div>
+
+            <div class="text-end">
+                <button type="button" @onclick="Volver" class="btn btn-danger">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                No se encontró el préstamo solicitado.
+            </div>
+        }
+    </div>
+</div>
 
 @code {
+    [Parameter] public int prestamoId { get; set; }
+    private Prestamos prestamo;
+    private List<ToastMessage> messages = new List<ToastMessage>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        prestamo = await prestamosServices.Buscar(prestamoId);
+    }
+
+    private void Volver()
+    {
+        navigationManager.NavigateTo("/Prestamos/Index");
+    }
 }
