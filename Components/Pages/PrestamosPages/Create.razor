@@ -1,5 +1,6 @@
 ﻿@page "/Prestamos/Create"
 @inject PrestamosServices prestamosServices
+@inject DeudoresServices deudoresServices
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
@@ -19,13 +20,14 @@
 
             @*Deudor*@
             <div class="mb-3">
-                <label for="Deudor" class="form-label">Deudor</label>
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <i class="bi bi-person-fill"></i>
-                    </span>
-                    <InputText id="Deudor" @bind-Value="prestamo.Deudor" class="form-control" required />
-                </div>
+                <label for="DeudorId" class="form-label">Deudor</label>
+                <InputSelect id="DeudorId" @bind-Value="prestamo.DeudorId" class="form-control" required>
+                    <option value="">Seleccione un Deudor</option>
+                    @foreach (var deudor in deudores)
+                    {
+                        <option value="@deudor.DeudorId">@deudor.Nombres</option>
+                    }
+                </InputSelect>
             </div>
 
             @*Concepto*@
@@ -47,6 +49,17 @@
                         <i class="bi bi-currency-dollar"></i>
                     </span>
                     <InputNumber id="Monto" @bind-Value="prestamo.Monto" class="form-control" required />
+                </div>
+            </div>
+
+            @*Balance*@
+            <div class="mb-3">
+                <label for="Monto" class="form-label">label</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-currency-bitcoin"></i>
+                    </span>
+                    <InputNumber id="Balance" @bind-Value="prestamo.Balance" class="form-control" disabled />
                 </div>
             </div>
 
@@ -72,13 +85,20 @@
 
 @code {
     private Prestamos prestamo = new Prestamos();
+    private List<Deudores> deudores = new List<Deudores>();
     private List<ToastMessage> messages = new List<ToastMessage>();
 
     private string? alertMessage;
     private AlertColor alertColor;
 
+    protected override async Task OnInitializedAsync()
+    {
+        deudores = await prestamosServices.ObtenerDeudores();
+    }
     private async Task GuardarPrestamo()
     {
+        prestamo.Balance = prestamo.Monto;
+
         if (await prestamosServices.Guardar(prestamo))
         {
             ShowMessage(ToastType.Success);
