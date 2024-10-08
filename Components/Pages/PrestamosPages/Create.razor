@@ -54,12 +54,12 @@
 
             @*Balance*@
             <div class="mb-3">
-                <label for="Monto" class="form-label">label</label>
+                <label for="Monto" class="form-label">Balance</label>
                 <div class="input-group">
                     <span class="input-group-text">
                         <i class="bi bi-currency-bitcoin"></i>
                     </span>
-                    <InputNumber id="Balance" @bind-Value="prestamo.Balance" class="form-control" disabled />
+                    <InputNumber id="Balance" @bind-Value="prestamo.Balance" class="form-control" readonly />
                 </div>
             </div>
 
