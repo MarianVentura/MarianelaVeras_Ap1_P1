@@ -17,7 +17,7 @@
         {
             <div class="mb-3">
                 <label class="form-label"><strong>Deudor:</strong></label>
-                <p>@prestamo.Deudor</p>
+                <p>@prestamo.Deudor.Nombres</p>
             </div>
 
             <div class="mb-3">
@@ -28,6 +28,11 @@
             <div class="mb-3">
                 <label class="form-label"><strong>Monto:</strong></label>
                 <p>@prestamo.Monto.ToString("C")</p>
+            </div> 
+            
+            <div class="mb-3">
+                <label class="form-label"><strong>Balance:</strong></label>
+                <p>@prestamo.Balance.ToString("C")</p>
             </div>
 
             <div class="alert alert-danger" role="alert">
