@@ -3,19 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MarianelaVeras_Ap1_P1.Models;
 
-public class Prestamos
+public class Cobros
 {
     [Key]
-    public int PrestamoId { get; set; }
-    
+    public int CobroId { get; set; }
+
     [Required(ErrorMessage = "Campo Obligatorio")]
-    public string? Concepto { get; set; }
+    public DateTime Fecha { get; set; }
 
     [Required(ErrorMessage = "Campo Obligatorio")]
     public decimal Monto { get; set; }
-
-    [Required(ErrorMessage = "Campo Obligatorio")]
-    public decimal Balance { get; set; }
 
     [Required(ErrorMessage = "Campo Obligatorio")]
     public int DeudorId { get; set; }
@@ -23,6 +20,6 @@ public class Prestamos
     [ForeignKey("DeudorId")]
     public Deudores? Deudor { get; set; }
 
-    public List<CobroDetalles> CobroDetalles { get; set; } = new List<CobroDetalles>();
+    public List<CobroDetalles> CobroDetalles { get; set; } = new List<CobroDetalles>();  
 
 }
