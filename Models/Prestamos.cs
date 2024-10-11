@@ -16,13 +16,11 @@ public class Prestamos
 
     [Required(ErrorMessage = "Campo Obligatorio")]
     public decimal Balance { get; set; }
-
-    [Required(ErrorMessage = "Campo Obligatorio")]
     public int DeudorId { get; set; }
 
     [ForeignKey("DeudorId")]
+    [Required(ErrorMessage = "Campo Obligatorio")]
     public Deudores? Deudor { get; set; }
 
-    public List<CobroDetalles> CobroDetalles { get; set; } = new List<CobroDetalles>();
 
 }

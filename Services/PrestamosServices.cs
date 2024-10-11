@@ -23,7 +23,8 @@ public class PrestamosServices
 
     private async Task<bool> Insertar(Prestamos prestamo)
     {
-        
+        prestamo.Balance = prestamo.Monto;
+
         _contexto.Prestamos.Add(prestamo);
         return await _contexto.SaveChangesAsync() > 0;
     }
@@ -31,7 +32,8 @@ public class PrestamosServices
 
     private async Task<bool> Modificar(Prestamos prestamo)
     {
-    
+        prestamo.Balance = prestamo.Monto;
+
         _contexto.Prestamos.Update(prestamo);
         var modificado = await _contexto.SaveChangesAsync() > 0;
 

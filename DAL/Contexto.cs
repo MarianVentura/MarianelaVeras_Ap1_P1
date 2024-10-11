@@ -9,8 +9,6 @@ public class Contexto : DbContext
 
     public DbSet<Prestamos> Prestamos { get; set; }
     public DbSet<Deudores> Deudores { get; set; }
-    public DbSet<Cobros> Cobros{ get; set; }
-    public DbSet<CobroDetalles> CobroDetalles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,17 +31,6 @@ public class Contexto : DbContext
             new Deudores { DeudorId = 9, Nombres = "Hatake Kakashi"},
             new Deudores { DeudorId = 10, Nombres = "Haruno Sakura"}
             );
-
-        modelBuilder.Entity<CobroDetalles>()
-            .HasOne(cd => cd.Cobro)
-            .WithMany(c => c.CobroDetalles)
-            .HasForeignKey(cd => cd.PrestamoId);
-
-        modelBuilder.Entity<CobroDetalles>()
-            .HasOne(cd => cd.Prestamo)
-            .WithMany(p => p.CobroDetalles)
-            .HasForeignKey(cd => cd.PrestamoId);
-
     }
 }
 
