@@ -1,6 +1,6 @@
 ﻿@page "/Cobros/Create/"
 @inject CobrosServices cobroService
-@inject CobroDetallesServices cobroDetalleService
+@inject CobroDetallesServices cobroDetallesServices
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
@@ -8,8 +8,9 @@
     <DataAnnotationsValidator />
 
     <div class="container">
+        @* Registro de Cobro *@
         <div class="card shadow-lg mb-4">
-            <div class="card-header">
+            <div class="card-header bg-success text-white">
                 <h3>Registrar Cobro</h3>
             </div>
             <div class="card-body">
@@ -53,15 +54,18 @@
                         El Cobro se eliminó exitosamente
                     </p>
                 }
+            </div>
+        </div>
 
-                @*Tabla Detalles de Cobro*@
-                <div class="card-header">
-                    <h3>Detalles del Cobro</h3>
-                </div>
-
+        @* Detalles del Cobro *@
+        <div class="card shadow-lg mb-4">
+            <div class="card-header bg-success bg-opacity-75 text-white">
+                <h3>Detalles del Cobro</h3>
+            </div>
+            <div class="card-body">
                 <div style="display: flex; align-items: center;">
                     <div class="col-3">
-                        <label for="Prestamo" class="form-label">Prestamo:</label>
+                        <label for="Prestamo" class="form-label">Préstamo:</label>
                         <InputSelect @bind-Value="cobroDetalle.PrestamoId" class="form-select" aria-label="PrestamoId">
                             <option value="0">Selecciona un Concepto</option>
                             @foreach (var item in listaPrestamo)
@@ -115,19 +119,19 @@
                 </table>
             </div>
         </div>
-    </div>
 
-    <div class="card-footer bg-light d-flex justify-content-center mt-3">
-        <div class="btn-group">
-            <button type="button" class="btn btn-primary" @onclick="Nuevo">
-                <span class="bi bi-floppy mt-3"></span> Nuevo
-            </button>
-            <button type="button" class="btn btn-primary" @onclick="async () => await Guardar()">
-                <span>Guardar <i class="bi bi-floppy mt-3" /></span>
-            </button>
-            <a href="/Cobro/Index" class="btn btn-primary">
-                <span>Volver</span> <i class="bi bi-arrow-left mt-3" />
-            </a>
+        <div class="card-footer bg-light d-flex justify-content-center mt-3">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-success" @onclick="Nuevo">
+                    <span class="bi bi-floppy mt-3"></span> Nuevo
+                </button>
+                <button type="button" class="btn btn-outline-primary" @onclick="async () => await Guardar()">
+                    <span>Guardar <i class="bi bi-floppy mt-3" /></span>
+                </button>
+                <a href="/Cobros/Index" class="btn btn-outline-info">
+                    <span>Volver</span> <i class="bi bi-arrow-left mt-3" />
+                </a>
+            </div>
         </div>
     </div>
 </EditForm>
@@ -148,7 +152,7 @@
     {
         listaDeudores = await cobroService.ObtenerDeudores();
         listaPrestamo = await cobroService.ObtenerPrestamos();
-        listaCobroDetalle = await cobroDetalleService.Listar(c => true);
+        listaCobroDetalle = await cobroDetallesServices.Listar(c => true);
         if (CobroId > 0)
         {
             cobro.CobroId = CobroId;
@@ -168,8 +172,8 @@
         if (await Validar())
             return;
 
-        var guardo = await cobroService.Guardar(cobro);
-        this.guardo = true;
+        await cobroService.Guardar(cobro);
+        guardo = true;
         Nuevo();
     }
 
@@ -178,15 +182,24 @@
         if (await ValidarDetalle())
             return;
 
-        var guardo = await cobroDetalleService.Guardar(cobroDetalle);
-        this.guardo = true;
-        cobroDetalle = new CobroDetalles(); 
+
+        listaCobroDetalle.Add(new CobroDetalles
+            {
+                DetalleId = listaCobroDetalle.Count + 1, 
+                PrestamoId = cobroDetalle.PrestamoId,
+                ValorCobrado = cobroDetalle.ValorCobrado,
+            });
+
+        cobroDetalle = new CobroDetalles();
+        StateHasChanged(); 
     }
+
 
     public void Nuevo()
     {
         cobro = new Cobros();
-        cobroDetalle = new CobroDetalles(); 
+        cobroDetalle = new CobroDetalles();
+        StateHasChanged();
     }
 
     public async Task<bool> Validar()
@@ -198,15 +211,16 @@
 
     public async Task<bool> ValidarDetalle()
     {
-        return false;
+        var existeDetalle = listaCobroDetalle.Any(d => d.PrestamoId == cobroDetalle.PrestamoId);
+        return existeDetalle;
     }
 
     public async Task EliminarDetalle(int detalleId)
     {
-        var elimino = await cobroDetalleService.Eliminar(detalleId);
+        var elimino = await cobroDetallesServices.Eliminar(detalleId);
         if (elimino)
         {
-            listaCobroDetalle = await cobroDetalleService.Listar(c => true);
+            listaCobroDetalle = await cobroDetallesServices.Listar(c => true);
             StateHasChanged();
         }
     }
