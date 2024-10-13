@@ -58,6 +58,9 @@
             </div>
 
             <div class="text-end">
+                <button type="button" @onclick="CargarDetalles" class="btn btn-info">
+                    <i class="bi bi-download"></i> Cargar Detalles
+                </button>
                 <button type="button" @onclick="Volver" class="btn btn-primary">
                     <i class="bi bi-arrow-left mt-3"></i> Volver
                 </button>
@@ -79,7 +82,33 @@
 
     protected override async Task OnInitializedAsync()
     {
-        cobro = await cobroService.Buscar(cobroId); 
+        cobro = await cobroService.Buscar(cobroId);
+        if (cobro == null)
+        {
+            messages.Add(new ToastMessage { Message = "Cobro no encontrado.", Type = ToastType.Warning });
+        }
+        else
+        {
+            
+            await CargarDetalles();
+        }
+    }
+
+    private async Task CargarDetalles()
+    {
+        if (cobro != null)
+        {
+            var detallesActualizados = await cobroService.ObtenerDetallesPorCobro(cobro.CobroId);
+            if (detallesActualizados != null && detallesActualizados.Count > 0)
+            {
+                cobro.CobroDetalles = detallesActualizados; 
+                messages.Add(new ToastMessage { Message = "Detalles cargados exitosamente.", Type = ToastType.Success });
+            }
+            else
+            {
+                messages.Add(new ToastMessage { Message = "No se encontraron detalles adicionales.", Type = ToastType.Warning });
+            }
+        }
     }
 
     private void Volver()
