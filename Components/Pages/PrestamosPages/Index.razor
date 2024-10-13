@@ -1,5 +1,6 @@
 ﻿@page "/Prestamos/Index"
 @inject PrestamosServices prestamosServices
+@inject DeudoresServices deudoresServices
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
@@ -21,8 +22,10 @@
                 <option value="deudor">Deudor</option>
                 <option value="concepto">Concepto</option>
                 <option value="monto">Monto</option>
+                <option value="balance">Balance</option>
             </select>
         </div>
+
         <div class="col-md-6">
             <label for="ValorFiltro" class="form-label"></label>
             <div class="input-group">
@@ -54,6 +57,7 @@
                     <th>Deudor</th>
                     <th>Concepto</th>
                     <th>Monto</th>
+                    <th>Balance</th>
                     <th>Ver</th>
                     <th>Editar</th>
                     <th>Eliminar</th>
@@ -67,6 +71,7 @@
                         <td>@prestamo.Deudor</td>
                         <td>@prestamo.Concepto</td>
                         <td>@prestamo.Monto.ToString("C")</td>
+                        <td>@prestamo.Balance.ToString("C")</td>
                         <td>
                             <a class="btn btn-outline-primary" href="/Prestamos/Details/@prestamo.PrestamoId">
                                 <span class="btn bi bi-eye"></span>
@@ -87,6 +92,7 @@
             </tbody>
         </table>
     </div>
+
     <div class="card-footer text-start">
         <p style="font-weight: bold;">Total de Préstamos: @ListaPrestamos.Count</p>
     </div>
@@ -94,6 +100,7 @@
 
 @code {
     public List<Prestamos> ListaPrestamos { get; set; } = new List<Prestamos>();
+    private List<Deudores> deudores = new List<Deudores>();
     private string filtro = "id";
     private string? valorFiltro;
 
@@ -103,6 +110,7 @@
     {
         ListaPrestamos = await prestamosServices.Listar(p => p.PrestamoId > 0);
         ShowMessage(ToastType.Info);
+        deudores = await prestamosServices.ObtenerDeudores();
     }
 
     private async Task Buscar()
@@ -115,7 +123,7 @@
             }
             else if (filtro == "deudor")
             {
-                ListaPrestamos = await prestamosServices.Listar(p => p.Deudor.Contains(valorFiltro, StringComparison.OrdinalIgnoreCase));
+                ListaPrestamos = await prestamosServices.Listar(p => p.Deudor.Nombres.Contains(valorFiltro, StringComparison.OrdinalIgnoreCase));
             }
             else if (filtro == "concepto")
             {
@@ -124,6 +132,10 @@
             else if (filtro == "monto" && decimal.TryParse(valorFiltro, out decimal monto))
             {
                 ListaPrestamos = await prestamosServices.Listar(p => p.Monto == monto);
+            }
+            else if (filtro == "balance" && decimal.TryParse(valorFiltro, out decimal balance))
+            {
+                ListaPrestamos = await prestamosServices.Listar(p => p.Balance == balance);
             }
         }
         else

@@ -2,7 +2,7 @@
 
 namespace MarianelaVeras_Ap1_P1.Models
 {
-    public class Deudor
+    public class Deudores
     {
         [Key]
         public int DeudorId { get; set; }

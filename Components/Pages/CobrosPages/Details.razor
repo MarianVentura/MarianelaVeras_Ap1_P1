@@ -1,0 +1,89 @@
+﻿@page "/Cobros/Details/{cobroId:int}"
+@inject CobrosServices cobroService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Detalles del Cobro</PageTitle>
+
+<Toasts class="p-3 mt-5" Messages="messages" Placement="ToastsPlacement.TopRight" />
+
+<div class="border shadow-lg p-3 rounded">
+    <div class="card-header bg-info text-white text-center py-2 rounded">
+        <h3 style="font-weight: bold;" class="mb-0">Detalles del Cobro</h3>
+    </div>
+
+    <div class="card-body">
+        @if (cobro != null)
+        {
+            <div class="mb-3">
+                <label class="form-label"><strong>Deudor:</strong></label>
+                @if (cobro.Deudor != null)
+                {
+                    <p>@cobro.Deudor.Nombres</p>
+                }
+                else
+                {
+                    <p>No se encontró el deudor.</p>
+                }
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Fecha:</strong></label>
+                <p>@cobro.Fecha.ToShortDateString()</p>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Monto:</strong></label>
+                <p>@cobro.Monto.ToString("C")</p>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Detalles:</strong></label>
+                <ul>
+                    @if (cobro.CobroDetalles != null && cobro.CobroDetalles.Count > 0)
+                    {
+                        foreach (var detalle in cobro.CobroDetalles)
+                        {
+                            <li>
+                                <strong>Concepto:</strong> @detalle.Prestamo?.Concepto <br />
+                                <strong>Valor Cobrado:</strong> @detalle.ValorCobrado.ToString("C")
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li>No hay detalles disponibles para este cobro.</li>
+                    }
+                </ul>
+            </div>
+
+            <div class="text-end">
+                <button type="button" @onclick="Volver" class="btn btn-primary">
+                    <i class="bi bi-arrow-left mt-3"></i> Volver
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                No se encontró el cobro solicitado.
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public int cobroId { get; set; }
+    private Cobros cobro;
+    private List<ToastMessage> messages = new List<ToastMessage>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        cobro = await cobroService.Buscar(cobroId); 
+    }
+
+    private void Volver()
+    {
+        navigationManager.NavigateTo("/Cobros/Index");
+    }
+}

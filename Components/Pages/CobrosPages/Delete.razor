@@ -1,25 +1,25 @@
-﻿@page "/Prestamos/Delete/{prestamoId:int}"
-@inject PrestamosServices prestamosServices
+﻿@page "/Cobros/Delete/{cobroId:int}"
+@inject CobrosServices cobroService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
-<PageTitle>Eliminar Préstamo</PageTitle>
+<PageTitle>Eliminar Cobro</PageTitle>
 
 <Toasts class="p-3 mt-5" Messages="messages" Placement="ToastsPlacement.TopRight" />
 
 <div class="border shadow-lg p-3 rounded">
     <div class="card-header bg-danger text-white text-center py-2 rounded">
-        <h3 style="font-weight: bold;" class="mb-0">Eliminar Préstamo</h3>
+        <h3 style="font-weight: bold;" class="mb-0">Eliminar Cobro</h3>
     </div>
 
     <div class="card-body">
-        @if (prestamo != null)
+        @if (cobro != null)
         {
             <div class="mb-3">
                 <label class="form-label"><strong>Deudor:</strong></label>
-                @if (prestamo.Deudor != null)
+                @if (cobro.Deudor != null)
                 {
-                    <p>@prestamo.Deudor.Nombres</p>
+                    <p>@cobro.Deudor.Nombres</p>
                 }
                 else
                 {
@@ -28,22 +28,17 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label"><strong>Concepto:</strong></label>
-                <p>@prestamo.Concepto</p>
+                <label class="form-label"><strong>Fecha:</strong></label>
+                <p>@cobro.Fecha.ToShortDateString()</p>
             </div>
 
             <div class="mb-3">
                 <label class="form-label"><strong>Monto:</strong></label>
-                <p>@prestamo.Monto.ToString("C")</p>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label"><strong>Balance:</strong></label>
-                <p>@prestamo.Balance.ToString("C")</p>
+                <p>@cobro.Monto.ToString("C")</p>
             </div>
 
             <div class="alert alert-danger" role="alert">
-                ¿Estás seguro de que deseas eliminar este préstamo?
+                ¿Estás seguro de que deseas eliminar este cobro?
             </div>
 
             <div class="text-end">
@@ -58,15 +53,15 @@
         else
         {
             <div class="alert alert-warning" role="alert">
-                No se encontró el préstamo solicitado.
+                No se encontró el cobro solicitado.
             </div>
         }
     </div>
 </div>
 
 @code {
-    [Parameter] public int prestamoId { get; set; }
-    private Prestamos prestamo;
+    [Parameter] public int cobroId { get; set; }
+    private Cobros cobro;
     private List<ToastMessage> messages = new List<ToastMessage>();
 
     private string? alertMessage;
@@ -74,26 +69,26 @@
 
     protected override async Task OnInitializedAsync()
     {
-        prestamo = await prestamosServices.Buscar(prestamoId);
+        cobro = await cobroService.Buscar(cobroId);
     }
 
     private async Task ConfirmarEliminacion()
     {
-        if (await prestamosServices.Eliminar(prestamoId))
+        if (await cobroService.Eliminar(cobroId))
         {
             ShowMessage(ToastType.Success);
-            navigationManager.NavigateTo("/Prestamos/Index");
+            navigationManager.NavigateTo("/Cobros/Index");
         }
         else
         {
             ShowMessage(ToastType.Warning);
-            ShowAlert("Error al eliminar el préstamo.", AlertColor.Danger);
+            ShowAlert("Error al eliminar el cobro.", AlertColor.Danger);
         }
     }
 
     private void Volver()
     {
-        navigationManager.NavigateTo("/Prestamos/Index");
+        navigationManager.NavigateTo("/Cobros/Index");
     }
 
     private void ShowMessage(ToastType toastType) => messages.Add(CreateToastMessage(toastType));
@@ -104,7 +99,7 @@
                 Type = toastType,
                 Title = "Blazor Bootstrap",
                 HelpText = $"{DateTime.Now}",
-                Message = $"Préstamo {(prestamo != null ? "eliminado" : "no encontrado")} con éxito. Fecha y hora: {DateTime.Now}",
+                Message = $"Cobro {(cobro != null ? "eliminado" : "no encontrado")} con éxito. Fecha y hora: {DateTime.Now}",
             };
 
     private void ShowAlert(string message, AlertColor color)
