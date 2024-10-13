@@ -54,6 +54,7 @@
                     <th>Deudor</th>
                     <th>Concepto</th>
                     <th>Monto</th>
+                    <th>Balance</th> 
                     <th>Ver</th>
                     <th>Editar</th>
                     <th>Eliminar</th>
@@ -64,9 +65,10 @@
                 {
                     <tr>
                         <td>@prestamo.PrestamoId</td>
-                        <td>@prestamo.Deudor?.Nombres</td> <!-- Muestra solo el nombre del deudor -->
+                        <td>@prestamo.Deudor?.Nombres</td> 
                         <td>@prestamo.Concepto</td>
-                        <td>@prestamo.Monto.ToString("C")</td> <!-- Formato de moneda -->
+                        <td>@prestamo.Monto.ToString("C")</td> 
+                        <td>@prestamo.Balance.ToString("C")</td> 
                         <td>
                             <a class="btn btn-outline-primary" href="/Prestamos/Details/@prestamo.PrestamoId">
                                 <span class="bi bi-eye-fill"></span>
