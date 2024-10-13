@@ -9,5 +9,7 @@ namespace MarianelaVeras_Ap1_P1.Models
 
         [Required(ErrorMessage = "Campo Obligatorio")]
         public string? Nombres {  get; set; }
+        
+        public ICollection<Cobros> Cobros { get; set; } = new List<Cobros>();
     }
 }
