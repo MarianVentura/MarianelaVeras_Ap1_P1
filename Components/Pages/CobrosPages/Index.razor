@@ -60,7 +60,7 @@
                 {
                     <tr>
                         <td>@cobro.CobroId</td>
-                        <td>@cobro.Deudor.Nombres</td>
+                        <td>@(cobro.Deudor != null ? cobro.Deudor.Nombres : "Desconocido")</td> <!-- Verificación de nulidad -->
                         <td>@cobro.Fecha.ToShortDateString()</td>
                         <td>@cobro.Monto.ToString("C")</td>
                         <td>

@@ -8,12 +8,10 @@ namespace MarianelaVeras_Ap1_P1.Services
     public class CobrosServices
     {
         private readonly Contexto _contexto;
-       
 
         public CobrosServices(Contexto contexto)
         {
             _contexto = contexto;
-        
         }
 
         public async Task<bool> Existe(int cobroId)
@@ -53,9 +51,9 @@ namespace MarianelaVeras_Ap1_P1.Services
         public async Task<Cobros?> Buscar(int id)
         {
             return await _contexto.Cobros
-                .Include(c => c.Deudor) 
-                .Include(c => c.CobroDetalles) 
-                    .ThenInclude(cd => cd.Prestamo) 
+                .Include(c => c.Deudor)
+                .Include(c => c.CobroDetalles)
+                    .ThenInclude(cd => cd.Prestamo)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.CobroId == id);
         }
@@ -79,5 +77,16 @@ namespace MarianelaVeras_Ap1_P1.Services
             return await _contexto.Prestamos.ToListAsync();
         }
 
+        public async Task<List<Prestamos>> ObtenerPrestamosPorDeudor(int deudorId)
+        {
+            return await _contexto.Prestamos
+                .Where(p => p.DeudorId == deudorId)
+                .ToListAsync();
+        }
+        public async Task<Prestamos> ObtenerPrestamoPorId(int prestamoId)
+        {
+            return await _contexto.Prestamos.FindAsync(prestamoId);
+        }
     }
+
 }

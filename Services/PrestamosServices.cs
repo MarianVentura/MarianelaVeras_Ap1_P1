@@ -45,6 +45,11 @@ public class PrestamosServices
     {
         prestamo.Balance = prestamo.Monto;
 
+        if (prestamo.CobroDetalles == null)
+        {
+            prestamo.CobroDetalles = new List<CobrosDetalle>();
+        }
+
         if (!await Existe(prestamo.PrestamoId))
             return await Insertar(prestamo);
         else
@@ -66,6 +71,8 @@ public class PrestamosServices
     {
         return await _contexto.Prestamos
             .AsNoTracking()
+            .Include(p => p.Deudor) 
+            .Include(p => p.CobroDetalles) 
             .FirstOrDefaultAsync(p => p.PrestamoId == id);
     }
 
@@ -74,6 +81,8 @@ public class PrestamosServices
     {
         return await _contexto.Prestamos
             .AsNoTracking()
+            .Include(p => p.Deudor) 
+            .Include(p => p.CobroDetalles) 
             .Where(criterio)
             .ToListAsync();
     }

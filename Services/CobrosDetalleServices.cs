@@ -2,15 +2,14 @@
 using MarianelaVeras_Ap1_P1.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using System.Reflection.Metadata.Ecma335;
 
 namespace MarianelaVeras_Ap1_P1.Services
 {
-    public class CobroDetallesServices
+    public class CobrosDetalleServices
     {
         private readonly Contexto _contexto;
 
-        public CobroDetallesServices(Contexto contexto)
+        public CobrosDetalleServices(Contexto contexto)
         {
             _contexto = contexto;
         }
@@ -79,7 +78,21 @@ namespace MarianelaVeras_Ap1_P1.Services
 
         public async Task<List<Prestamos>> ObtenerPrestamo()
         {
-            return await _contexto.Prestamos.ToListAsync(); 
+            return await _contexto.Prestamos.ToListAsync();
+        }
+
+        public async Task<int> ContarDetallesPorCobro(int cobroId)
+        {
+            return await _contexto.CobroDetalles
+                .Where(cd => cd.CobroId == cobroId)
+                .CountAsync();
+        }
+
+        public async Task<List<CobrosDetalle>> ObtenerDetallesPorPrestamo(int prestamoId)
+        {
+            return await _contexto.CobroDetalles
+                .Where(cd => cd.PrestamoId == prestamoId)
+                .ToListAsync();
         }
     }
 }

@@ -26,7 +26,7 @@ public class Program
         builder.Services.AddScoped<PrestamosServices>();
         builder.Services.AddScoped<DeudoresServices>();
         builder.Services.AddScoped<CobrosServices>();
-        builder.Services.AddScoped<CobroDetallesServices>();
+        builder.Services.AddScoped<CobrosDetalleServices>();
 
         builder.Services.AddBlazorBootstrap();
 
