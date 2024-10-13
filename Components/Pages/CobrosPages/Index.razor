@@ -1,0 +1,149 @@
+﻿@page "/Cobros/Index/"
+@inject CobrosServices cobrosServices
+@inject NavigationManager navigation
+@rendermode InteractiveServer
+
+<PageTitle>Cobros</PageTitle>
+
+<Toasts class="p-3 mt-3" Messages="messages" Placement="ToastsPlacement.TopRight" />
+
+<div class="border shadow-lg p-3 rounded">
+    <div class="card-header bg-primary text-white text-center py-2 rounded">
+        <h3 style="font-weight: bold;" class="mb-0">Cobros</h3>
+    </div>
+
+    <div class="row mb-3 align-items-end">
+        <div class="col-md-3">
+            <label for="Filtro" class="form-label"></label>
+            <select @bind="filtro" class="form-select">
+                <option value="" disabled selected>Filtrar por:</option>
+                <option value="id">ID</option>
+                <option value="deudor">Deudor</option>
+                <option value="fecha">Fecha</option>
+                <option value="monto">Monto</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label for="ValorFiltro" class="form-label"></label>
+            <div class="input-group">
+                <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
+                <button @onclick="Buscar" class="btn btn-outline-secondary" type="button">
+                    <span class="bi bi-search"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="col-md-3 text-end">
+            <a href="/Cobros/Create/" class="btn btn-success" type="button">
+                <i class="bi bi-plus-square mt-3"></i>
+                Crear
+            </a>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered text-center">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th>CobroId</th>
+                    <th>Deudor</th>
+                    <th>Fecha</th>
+                    <th>Monto</th>
+                    <th>Ver</th>
+                    <th>Editar</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cobro in ListaCobros)
+                {
+                    <tr>
+                        <td>@cobro.CobroId</td>
+                        <td>@cobro.Deudor.Nombres</td>
+                        <td>@cobro.Fecha.ToShortDateString()</td>
+                        <td>@cobro.Monto.ToString("C")</td>
+                        <td>
+                            <a class="btn btn-outline-primary" href="/Cobros/Details/@cobro.CobroId">
+                                <span class="bi bi-eye"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a class="btn btn-outline-success" href="/Cobros/Edit/@cobro.CobroId">
+                                <span class="bi bi-pencil-square"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a class="btn btn-outline-danger" href="/Cobros/Delete/@cobro.CobroId">
+                                <span class="bi bi-trash"></span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card-footer text-start">
+        <p style="font-weight: bold;">Total de Cobros: @ListaCobros.Count</p>
+    </div>
+</div>
+
+@code {
+    public List<Cobros> ListaCobros { get; set; } = new List<Cobros>();
+    private string filtro = "id";
+    private string? valorFiltro;
+    private List<ToastMessage> messages = new List<ToastMessage>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaCobros = await cobrosServices.Listar(c => true);
+        ShowMessage(ToastType.Info);
+    }
+
+    private async Task Buscar()
+    {
+        if (!string.IsNullOrWhiteSpace(valorFiltro))
+        {
+            if (filtro == "id" && int.TryParse(valorFiltro, out int cobroId))
+            {
+                ListaCobros = await cobrosServices.Listar(c => c.CobroId == cobroId);
+            }
+            else if (filtro == "deudor")
+            {
+                ListaCobros = await cobrosServices.Listar(c => c.Deudor.Nombres.Contains(valorFiltro, StringComparison.OrdinalIgnoreCase));
+            }
+            else if (filtro == "fecha" && DateTime.TryParse(valorFiltro, out DateTime fecha))
+            {
+                ListaCobros = await cobrosServices.Listar(c => c.Fecha.Date == fecha.Date);
+            }
+            else if (filtro == "monto" && decimal.TryParse(valorFiltro, out decimal monto))
+            {
+                ListaCobros = await cobrosServices.Listar(c => c.Monto == monto);
+            }
+        }
+        else
+        {
+            ListaCobros = await cobrosServices.Listar(c => true);
+        }
+
+        ShowMessage(ToastType.Success);
+    }
+
+    private void ShowMessage(ToastType toastType)
+    {
+        messages.Add(CreateToastMessage(toastType));
+    }
+
+    private ToastMessage CreateToastMessage(ToastType toastType)
+    {
+        return new ToastMessage
+            {
+                Type = toastType,
+                Title = "Blazor Bootstrap",
+                HelpText = $"{DateTime.Now}",
+                Message = $"Operación completada exitosamente en {DateTime.Now}",
+            };
+    }
+
+}
