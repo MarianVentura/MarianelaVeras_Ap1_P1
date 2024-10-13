@@ -1,6 +1,5 @@
 ﻿@page "/Prestamos/Index"
 @inject PrestamosServices prestamosServices
-@inject DeudoresServices deudoresServices
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
@@ -22,10 +21,8 @@
                 <option value="deudor">Deudor</option>
                 <option value="concepto">Concepto</option>
                 <option value="monto">Monto</option>
-                <option value="balance">Balance</option>
             </select>
         </div>
-
         <div class="col-md-6">
             <label for="ValorFiltro" class="form-label"></label>
             <div class="input-group">
@@ -42,7 +39,7 @@
             <div class="col-md-9"></div>
             <div class="col-md-3 text-end">
                 <a href="/Prestamos/Create" class="btn btn-success" type="button">
-                    <i class="bi bi-plus-square mt-3"></i>
+                    <i class="bi bi-pencil-square"></i>
                     Crear
                 </a>
             </div>
@@ -57,7 +54,6 @@
                     <th>Deudor</th>
                     <th>Concepto</th>
                     <th>Monto</th>
-                    <th>Balance</th>
                     <th>Ver</th>
                     <th>Editar</th>
                     <th>Eliminar</th>
@@ -68,23 +64,22 @@
                 {
                     <tr>
                         <td>@prestamo.PrestamoId</td>
-                        <td>@prestamo.Deudor</td>
+                        <td>@prestamo.Deudor?.Nombres</td> <!-- Muestra solo el nombre del deudor -->
                         <td>@prestamo.Concepto</td>
-                        <td>@prestamo.Monto.ToString("C")</td>
-                        <td>@prestamo.Balance.ToString("C")</td>
+                        <td>@prestamo.Monto.ToString("C")</td> <!-- Formato de moneda -->
                         <td>
                             <a class="btn btn-outline-primary" href="/Prestamos/Details/@prestamo.PrestamoId">
-                                <span class="btn bi bi-eye"></span>
+                                <span class="bi bi-eye-fill"></span>
                             </a>
                         </td>
                         <td>
                             <a class="btn btn-outline-success" href="/Prestamos/Edit/@prestamo.PrestamoId">
-                                <span class="btn bi bi-pencil-square"></span>
+                                <span class="bi bi-pencil-square"></span>
                             </a>
                         </td>
                         <td>
                             <a class="btn btn-outline-danger" href="/Prestamos/Delete/@prestamo.PrestamoId">
-                                <span class="btn bi bi-trash"></span>
+                                <span class="bi bi-trash"></span>
                             </a>
                         </td>
                     </tr>
@@ -92,7 +87,6 @@
             </tbody>
         </table>
     </div>
-
     <div class="card-footer text-start">
         <p style="font-weight: bold;">Total de Préstamos: @ListaPrestamos.Count</p>
     </div>
@@ -100,7 +94,6 @@
 
 @code {
     public List<Prestamos> ListaPrestamos { get; set; } = new List<Prestamos>();
-    private List<Deudores> deudores = new List<Deudores>();
     private string filtro = "id";
     private string? valorFiltro;
 
@@ -108,9 +101,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ListaPrestamos = await prestamosServices.Listar(p => p.PrestamoId > 0);
+        ListaPrestamos = await prestamosServices.Listar(p => true);
         ShowMessage(ToastType.Info);
-        deudores = await prestamosServices.ObtenerDeudores();
     }
 
     private async Task Buscar()
@@ -132,10 +124,6 @@
             else if (filtro == "monto" && decimal.TryParse(valorFiltro, out decimal monto))
             {
                 ListaPrestamos = await prestamosServices.Listar(p => p.Monto == monto);
-            }
-            else if (filtro == "balance" && decimal.TryParse(valorFiltro, out decimal balance))
-            {
-                ListaPrestamos = await prestamosServices.Listar(p => p.Balance == balance);
             }
         }
         else
