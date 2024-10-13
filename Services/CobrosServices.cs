@@ -61,7 +61,7 @@ namespace MarianelaVeras_Ap1_P1.Services
         public async Task<List<Cobros>> Listar(Expression<Func<Cobros, bool>> criterio)
         {
             return await _contexto.Cobros
-                .Include(c => c.CobroDetalles)
+                .Include(c => c.Deudor)
                 .AsNoTracking()
                 .Where(criterio)
                 .ToListAsync();
