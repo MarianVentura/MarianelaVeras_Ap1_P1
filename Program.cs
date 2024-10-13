@@ -1,7 +1,6 @@
 using MarianelaVeras_Ap1_P1.Components;
 using MarianelaVeras_Ap1_P1.DAL;
 using Microsoft.EntityFrameworkCore;
-using MarianelaVeras_Ap1_P1.DAL;
 using MarianelaVeras_Ap1_P1.Models;
 using MarianelaVeras_Ap1_P1.Services;
 
@@ -26,6 +25,8 @@ public class Program
 
         builder.Services.AddScoped<PrestamosServices>();
         builder.Services.AddScoped<DeudoresServices>();
+        builder.Services.AddScoped<CobrosServices>();
+        builder.Services.AddScoped<CobroDetallesServices>();
 
         builder.Services.AddBlazorBootstrap();
 
