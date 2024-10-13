@@ -155,6 +155,8 @@
             return;
 
         cobro.Monto = listaCobroDetalle.Sum(cd => cd.ValorCobrado); // Sumar todos los valores cobrados
+        cobro.CobroDetalles = listaCobroDetalle; // Asegúrate de asignar la lista de detalles al cobro
+
         guardo = await cobroService.Guardar(cobro);
         guardo = true;
         Nuevo();
@@ -165,8 +167,21 @@
         if (await ValidarDetalle())
             return;
 
+        // Establecer el CobroId
         cobroDetalle.CobroId = cobro.CobroId;
-        listaCobroDetalle.Add(cobroDetalle);  // Asegúrate de agregar el detalle a la lista
+
+        // Obtener el préstamo seleccionado para obtener el concepto
+        var prestamoSeleccionado = listaPrestamo.FirstOrDefault(p => p.PrestamoId == cobroDetalle.PrestamoId);
+        if (prestamoSeleccionado != null)
+        {
+            cobroDetalle.Prestamo = prestamoSeleccionado; // Asigna el objeto del préstamo al detalle
+        }
+
+        // Asegúrate de asignar un nuevo DetalleId. Si estás usando un sistema de auto-incremento, este paso podría no ser necesario.
+        cobroDetalle.DetalleId = listaCobroDetalle.Count + 1; // O el ID correcto según tu lógica
+
+        // Agregar el detalle a la lista
+        listaCobroDetalle.Add(cobroDetalle);
         cobroDetalle = new CobrosDetalle(); // Reinicia el modelo para un nuevo detalle
         StateHasChanged();
     }
@@ -188,7 +203,7 @@
 
     public async Task<bool> ValidarDetalle()
     {
-        return false; 
+        return false;
     }
 
     public void EliminarDetalle(int detalleId)
