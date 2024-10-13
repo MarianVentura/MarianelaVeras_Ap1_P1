@@ -64,9 +64,6 @@
     private Cobros cobro;
     private List<ToastMessage> messages = new List<ToastMessage>();
 
-    private string? alertMessage;
-    private AlertColor alertColor;
-
     protected override async Task OnInitializedAsync()
     {
         cobro = await cobroService.Buscar(cobroId);
@@ -76,13 +73,12 @@
     {
         if (await cobroService.Eliminar(cobroId))
         {
-            ShowMessage(ToastType.Success);
+            ShowMessage(ToastType.Success, "Cobro eliminado con éxito.");
             navigationManager.NavigateTo("/Cobros/Index");
         }
         else
         {
-            ShowMessage(ToastType.Warning);
-            ShowAlert("Error al eliminar el cobro.", AlertColor.Danger);
+            ShowMessage(ToastType.Warning, "Error al eliminar el cobro.");
         }
     }
 
@@ -91,20 +87,14 @@
         navigationManager.NavigateTo("/Cobros/Index");
     }
 
-    private void ShowMessage(ToastType toastType) => messages.Add(CreateToastMessage(toastType));
-
-    private ToastMessage CreateToastMessage(ToastType toastType)
-        => new ToastMessage
-            {
-                Type = toastType,
-                Title = "Blazor Bootstrap",
-                HelpText = $"{DateTime.Now}",
-                Message = $"Cobro {(cobro != null ? "eliminado" : "no encontrado")} con éxito. Fecha y hora: {DateTime.Now}",
-            };
-
-    private void ShowAlert(string message, AlertColor color)
+    private void ShowMessage(ToastType toastType, string customMessage) 
     {
-        alertMessage = message;
-        alertColor = color;
+        messages.Add(new ToastMessage 
+        { 
+            Type = toastType, 
+            Title = "Notificación", 
+            HelpText = $"{DateTime.Now}", 
+            Message = customMessage 
+        });
     }
 }
