@@ -140,12 +140,12 @@
     [Parameter]
     public int CobroId { get; set; }
     public Cobros cobro { get; set; } = new Cobros();
-    public CobroDetalles cobroDetalle { get; set; } = new CobroDetalles();
+    public CobrosDetalle cobroDetalle { get; set; } = new CobrosDetalle();
     public bool existe { get; set; } = false;
     public bool guardo { get; set; } = false;
     public bool elimino { get; set; } = false;
     public List<Deudores> listaDeudores { get; set; } = new List<Deudores>();
-    public List<CobroDetalles> listaCobroDetalle { get; set; } = new List<CobroDetalles>();
+    public List<CobrosDetalle> listaCobroDetalle { get; set; } = new List<CobrosDetalle>();
     public List<Prestamos> listaPrestamo { get; set; } = new List<Prestamos>();
 
     protected override async Task OnInitializedAsync()
@@ -183,14 +183,14 @@
             return;
 
 
-        listaCobroDetalle.Add(new CobroDetalles
+        listaCobroDetalle.Add(new CobrosDetalle
             {
                 DetalleId = listaCobroDetalle.Count + 1, 
                 PrestamoId = cobroDetalle.PrestamoId,
                 ValorCobrado = cobroDetalle.ValorCobrado,
             });
 
-        cobroDetalle = new CobroDetalles();
+        cobroDetalle = new CobrosDetalle();
         StateHasChanged(); 
     }
 
@@ -198,7 +198,7 @@
     public void Nuevo()
     {
         cobro = new Cobros();
-        cobroDetalle = new CobroDetalles();
+        cobroDetalle = new CobrosDetalle();
         StateHasChanged();
     }
 

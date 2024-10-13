@@ -20,6 +20,6 @@ public class Cobros
     [ForeignKey("DeudorId")]
     public Deudores? Deudor { get; set; }
 
-    public List<CobroDetalles> CobroDetalles { get; set; } = new List<CobroDetalles>();  
+    public List<CobrosDetalle> CobroDetalles { get; set; } = new List<CobrosDetalle>();  
 
 }
