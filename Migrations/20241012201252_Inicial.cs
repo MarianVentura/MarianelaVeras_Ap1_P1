@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -26,6 +27,27 @@ namespace MarianelaVeras_Ap1_P1.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Cobros",
+                columns: table => new
+                {
+                    CobroId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Monto = table.Column<decimal>(type: "TEXT", nullable: false),
+                    DeudorId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cobros", x => x.CobroId);
+                    table.ForeignKey(
+                        name: "FK_Cobros_Deudores_DeudorId",
+                        column: x => x.DeudorId,
+                        principalTable: "Deudores",
+                        principalColumn: "DeudorId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Prestamos",
                 columns: table => new
                 {
@@ -47,6 +69,33 @@ namespace MarianelaVeras_Ap1_P1.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CobroDetalles",
+                columns: table => new
+                {
+                    DetalleId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CobroId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PrestamoId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ValorCobrado = table.Column<decimal>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CobroDetalles", x => x.DetalleId);
+                    table.ForeignKey(
+                        name: "FK_CobroDetalles_Cobros_PrestamoId",
+                        column: x => x.PrestamoId,
+                        principalTable: "Cobros",
+                        principalColumn: "CobroId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CobroDetalles_Prestamos_PrestamoId",
+                        column: x => x.PrestamoId,
+                        principalTable: "Prestamos",
+                        principalColumn: "PrestamoId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Deudores",
                 columns: new[] { "DeudorId", "Nombres" },
@@ -65,6 +114,16 @@ namespace MarianelaVeras_Ap1_P1.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_CobroDetalles_PrestamoId",
+                table: "CobroDetalles",
+                column: "PrestamoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Cobros_DeudorId",
+                table: "Cobros",
+                column: "DeudorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Prestamos_DeudorId",
                 table: "Prestamos",
                 column: "DeudorId");
@@ -73,6 +132,12 @@ namespace MarianelaVeras_Ap1_P1.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "CobroDetalles");
+
+            migrationBuilder.DropTable(
+                name: "Cobros");
+
             migrationBuilder.DropTable(
                 name: "Prestamos");
 
