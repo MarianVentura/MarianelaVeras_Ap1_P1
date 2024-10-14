@@ -61,7 +61,7 @@ namespace MarianelaVeras_Ap1_P1.Services
         public async Task<List<Cobros>> Listar(Expression<Func<Cobros, bool>> criterio)
         {
             return await _contexto.Cobros
-                .Include(c => c.CobroDetalles)
+                .Include(c => c.Deudor)
                 .AsNoTracking()
                 .Where(criterio)
                 .ToListAsync();
@@ -87,6 +87,15 @@ namespace MarianelaVeras_Ap1_P1.Services
         {
             return await _contexto.Prestamos.FindAsync(prestamoId);
         }
+
+        public async Task<List<CobrosDetalle>> ObtenerDetallesPorCobro(int cobroId)
+        {
+            return await _contexto.CobroDetalles
+                .Include(cd => cd.Prestamo)  
+                .Where(cd => cd.CobroId == cobroId)
+                .ToListAsync();
+        }
+
     }
 
 }

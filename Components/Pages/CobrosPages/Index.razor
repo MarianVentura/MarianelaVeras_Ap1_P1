@@ -5,7 +5,7 @@
 
 <PageTitle>Cobros</PageTitle>
 
-<Toasts class="p-3 mt-3" Messages="messages" Placement="ToastsPlacement.TopRight" />
+<Toasts class="p-3 mt-5" Messages="messages" Placement="ToastsPlacement.TopRight" />
 
 <div class="border shadow-lg p-3 rounded">
     <div class="card-header bg-primary text-white text-center py-2 rounded">
@@ -60,7 +60,7 @@
                 {
                     <tr>
                         <td>@cobro.CobroId</td>
-                        <td>@(cobro.Deudor != null ? cobro.Deudor.Nombres : "Desconocido")</td> <!-- Verificación de nulidad -->
+                        <td>@(cobro.Deudor != null ? cobro.Deudor.Nombres : "Desconocido")</td> 
                         <td>@cobro.Fecha.ToShortDateString()</td>
                         <td>@cobro.Monto.ToString("C")</td>
                         <td>

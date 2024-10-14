@@ -17,28 +17,6 @@ namespace MarianelaVeras_Ap1_P1.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
 
-            modelBuilder.Entity("MarianelaVeras_Ap1_P1.Models.CobroDetalles", b =>
-                {
-                    b.Property<int>("DetalleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CobroId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PrestamoId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("ValorCobrado")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("DetalleId");
-
-                    b.HasIndex("PrestamoId");
-
-                    b.ToTable("CobroDetalles");
-                });
-
             modelBuilder.Entity("MarianelaVeras_Ap1_P1.Models.Cobros", b =>
                 {
                     b.Property<int>("CobroId")
@@ -59,6 +37,28 @@ namespace MarianelaVeras_Ap1_P1.Migrations
                     b.HasIndex("DeudorId");
 
                     b.ToTable("Cobros");
+                });
+
+            modelBuilder.Entity("MarianelaVeras_Ap1_P1.Models.CobrosDetalle", b =>
+                {
+                    b.Property<int>("DetalleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CobroId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PrestamoId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("ValorCobrado")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("DetalleId");
+
+                    b.HasIndex("PrestamoId");
+
+                    b.ToTable("CobroDetalles");
                 });
 
             modelBuilder.Entity("MarianelaVeras_Ap1_P1.Models.Deudores", b =>
@@ -154,7 +154,18 @@ namespace MarianelaVeras_Ap1_P1.Migrations
                     b.ToTable("Prestamos");
                 });
 
-            modelBuilder.Entity("MarianelaVeras_Ap1_P1.Models.CobroDetalles", b =>
+            modelBuilder.Entity("MarianelaVeras_Ap1_P1.Models.Cobros", b =>
+                {
+                    b.HasOne("MarianelaVeras_Ap1_P1.Models.Deudores", "Deudor")
+                        .WithMany("Cobros")
+                        .HasForeignKey("DeudorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Deudor");
+                });
+
+            modelBuilder.Entity("MarianelaVeras_Ap1_P1.Models.CobrosDetalle", b =>
                 {
                     b.HasOne("MarianelaVeras_Ap1_P1.Models.Cobros", "Cobro")
                         .WithMany("CobroDetalles")
@@ -173,17 +184,6 @@ namespace MarianelaVeras_Ap1_P1.Migrations
                     b.Navigation("Prestamo");
                 });
 
-            modelBuilder.Entity("MarianelaVeras_Ap1_P1.Models.Cobros", b =>
-                {
-                    b.HasOne("MarianelaVeras_Ap1_P1.Models.Deudores", "Deudor")
-                        .WithMany()
-                        .HasForeignKey("DeudorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Deudor");
-                });
-
             modelBuilder.Entity("MarianelaVeras_Ap1_P1.Models.Prestamos", b =>
                 {
                     b.HasOne("MarianelaVeras_Ap1_P1.Models.Deudores", "Deudor")
@@ -198,6 +198,11 @@ namespace MarianelaVeras_Ap1_P1.Migrations
             modelBuilder.Entity("MarianelaVeras_Ap1_P1.Models.Cobros", b =>
                 {
                     b.Navigation("CobroDetalles");
+                });
+
+            modelBuilder.Entity("MarianelaVeras_Ap1_P1.Models.Deudores", b =>
+                {
+                    b.Navigation("Cobros");
                 });
 
             modelBuilder.Entity("MarianelaVeras_Ap1_P1.Models.Prestamos", b =>
